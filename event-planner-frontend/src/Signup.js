@@ -16,8 +16,19 @@ function Signup() {
         },
         body: JSON.stringify({ username, email, password }),
       });
+
       const data = await response.json();
-      setMessage(data.message || "Signup failed");
+
+      if (data.token) {
+        // Store token in localStorage
+        localStorage.setItem("authToken", data.token);
+        setMessage("Signup successful!");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+      } else {
+        setMessage(data.message || "Signup failed");
+      }
     } catch (error) {
       setMessage("Error connecting to server");
       console.error(error);
@@ -30,15 +41,29 @@ function Signup() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Username:</label>
-          <input value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
         <div>
           <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
         <div>
           <label>Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
         <button type="submit">Signup</button>
       </form>

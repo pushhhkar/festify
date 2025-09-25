@@ -1,15 +1,26 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import store from './store';
-import Signup from './Signup';
+import React, { useState } from "react";
+import AuthForm from "./AuthForm";
+import Events from "./Events";
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("authToken") || "");
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    setToken("");
+  };
+
   return (
-    <Provider store={store}>
-      <div className="App">
-        <Signup />
-      </div>
-    </Provider>
+    <div className="App" style={{ maxWidth: "600px", margin: "50px auto" }}>
+      {!token ? (
+        <AuthForm setToken={setToken} />
+      ) : (
+        <>
+          <button onClick={handleLogout}>Logout</button>
+          <Events token={token} />
+        </>
+      )}
+    </div>
   );
 }
 
