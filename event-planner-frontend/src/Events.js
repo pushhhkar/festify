@@ -14,15 +14,17 @@ function Events({ token }) {
       const response = await fetch("http://127.0.0.1:8000/api/events/", {
         headers: { Authorization: `Token ${token}` },
       });
+      if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
       setEvents(data);
     } catch (error) {
       console.error("Error fetching events:", error);
+      setMessage("Error fetching events");
     }
   };
 
   useEffect(() => {
-    fetchEvents();
+    if (token) fetchEvents();
   }, [token]);
 
   const handleAddOrEditEvent = async (e) => {
@@ -94,19 +96,36 @@ function Events({ token }) {
         <h3>{editingId ? "Edit Event" : "Add New Event"}</h3>
         <div>
           <label>Title:</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} required />
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
         </div>
         <div>
           <label>Description:</label>
-          <input value={description} onChange={(e) => setDescription(e.target.value)} required />
+          <input
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
         </div>
         <div>
           <label>Location:</label>
-          <input value={location} onChange={(e) => setLocation(e.target.value)} required />
+          <input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
         </div>
         <div>
           <label>Date:</label>
-          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
         </div>
         <button type="submit">{editingId ? "Update Event" : "Add Event"}</button>
       </form>
