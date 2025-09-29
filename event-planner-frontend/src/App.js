@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import Signup from "./Signup";
 import Login from "./Login";
+import Signup from "./Signup";
 import Events from "./Events";
 
 function App() {
-  // Use the same key "token" as in login.js
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [token, setToken] = useState(localStorage.getItem("authToken") || "");
+  const [showSignup, setShowSignup] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // remove stored token
+    localStorage.removeItem("authToken");
     setToken("");
   };
 
@@ -16,14 +16,28 @@ function App() {
     <div className="App" style={{ maxWidth: "600px", margin: "50px auto" }}>
       {!token ? (
         <>
-          <Signup />
-          <hr />
-          <Login onLogin={setToken} /> {/* updated prop to match login.js */}
+          {showSignup ? (
+            <>
+              <Signup setToken={setToken} />
+              <p>
+                Already have an account?{" "}
+                <button onClick={() => setShowSignup(false)}>Login</button>
+              </p>
+            </>
+          ) : (
+            <>
+              <Login setToken={setToken} />
+              <p>
+                Don’t have an account?{" "}
+                <button onClick={() => setShowSignup(true)}>Signup</button>
+              </p>
+            </>
+          )}
         </>
       ) : (
         <>
           <button onClick={handleLogout}>Logout</button>
-          <Events token={token} /> {/* pass token to Events */}
+          <Events token={token} />
         </>
       )}
     </div>

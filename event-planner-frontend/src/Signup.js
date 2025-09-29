@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 function Signup() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
@@ -11,27 +10,21 @@ function Signup() {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/signup/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-
-      if (data.token) {
-        // Store token in localStorage
-        localStorage.setItem("authToken", data.token);
-        setMessage("Signup successful!");
+      if (response.ok) {
+        setMessage("Signup successful! Please login.");
         setUsername("");
-        setEmail("");
         setPassword("");
       } else {
-        setMessage(data.message || "Signup failed");
+        const data = await response.json();
+        setMessage(data.detail || "Signup failed");
       }
     } catch (error) {
-      setMessage("Error connecting to server");
       console.error(error);
+      setMessage("Error connecting to server");
     }
   };
 
@@ -44,15 +37,6 @@ function Signup() {
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>

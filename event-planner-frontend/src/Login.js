@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function Login({ onLogin }) {
+function Login({ setToken }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -10,23 +10,22 @@ function Login({ onLogin }) {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
       if (response.ok) {
-        localStorage.setItem("token", data.token); // store token
+        const data = await response.json();
+        localStorage.setItem("authToken", data.token);
+        setToken(data.token);
         setMessage("Login successful!");
-        if (onLogin) onLogin(data.token); // pass token to parent
       } else {
-        setMessage(data.error || "Login failed");
+        const data = await response.json();
+        setMessage(data.detail || "Login failed");
       }
     } catch (error) {
-      setMessage("Error connecting to server");
       console.error(error);
+      setMessage("Error connecting to server");
     }
   };
 
